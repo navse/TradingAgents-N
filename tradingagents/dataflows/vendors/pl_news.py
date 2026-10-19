@@ -77,10 +77,24 @@ def is_warsaw_listing(ticker: str) -> bool:
     return normalize_symbol(ticker).endswith(".WA")
 
 
+# Yahoo's short name for a Warsaw listing is often a feed code rather than a
+# name ("APR C.XWAR PLN" for Auto Partner); such a name finds nothing.
+_CODE_LIKE = re.compile(r"\.X[A-Z]{3}\b|\bX(?:WAR|WSE)\b|\s(?:PLN|EUR|USD)$")
+
+
+def _usable_name(name: str | None) -> str | None:
+    name = (name or "").strip()
+    if not name or _CODE_LIKE.search(name.upper()):
+        return None
+    return name
+
+
 @lru_cache(maxsize=256)
 def _yahoo_short_name(canonical: str) -> str | None:
+    """The company's name on Yahoo: the long name first, as the short name of a
+    Warsaw listing is often a feed code. None when neither reads as a name."""
     info = yf_retry(lambda: yf.Ticker(canonical).info) or {}
-    return info.get("shortName") or info.get("longName")
+    return _usable_name(info.get("longName")) or _usable_name(info.get("shortName"))
 
 
 def company_name(ticker: str) -> str:

@@ -149,3 +149,20 @@ def test_warsaw_benchmark():
     assert resolve_benchmark("CDR.WA", DEFAULT_CONFIG) == "WIG20.WA"
     assert resolve_benchmark("CDR.PL", DEFAULT_CONFIG) == "WIG20.WA"
     assert resolve_benchmark("AAPL", DEFAULT_CONFIG) == "SPY"
+
+
+@pytest.mark.unit
+def test_yahoo_feed_codes_are_not_used_as_names(monkeypatch):
+    class FakeTicker:
+        def __init__(self, info):
+            self.info = info
+
+    pl._yahoo_short_name.cache_clear()
+    monkeypatch.setattr(pl.yf, "Ticker", lambda s: FakeTicker({"shortName": "APR C.XWAR PLN", "longName": "Auto Partner SA"}))
+    assert pl._yahoo_short_name("APR.WA") == "Auto Partner SA"
+    pl._yahoo_short_name.cache_clear()
+    monkeypatch.setattr(pl.yf, "Ticker", lambda s: FakeTicker({"shortName": "APR C.XWAR PLN"}))
+    assert pl._yahoo_short_name("APR.WA") is None
+    monkeypatch.setattr(pl, "get_config", lambda: {})
+    assert pl.company_name("APR.WA") == "APR"
+    pl._yahoo_short_name.cache_clear()
