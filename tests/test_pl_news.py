@@ -51,6 +51,8 @@ def feeds(monkeypatch):
 
     monkeypatch.setattr(pl, "_fetch", fake_fetch)
     monkeypatch.setattr(pl, "_yahoo_short_name", lambda canonical: "AUTO PARTNER SA")
+    # The name comes from Yahoo here, whatever names the local config lists.
+    monkeypatch.setattr(pl, "get_config", lambda: {"pl_news_company_names": {}})
     return calls
 
 

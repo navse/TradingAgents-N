@@ -163,9 +163,10 @@ def build_default_config() -> dict:
         "data_vendors": {
             "core_stock_apis": "yfinance",       # Options: alpha_vantage, yfinance
             "technical_indicators": "yfinance",  # Options: alpha_vantage, yfinance
-            # Statements come from SEC EDGAR as filed (US filers), then Yahoo; the
-        # overview and insider tools, which SEC EDGAR does not serve, from Yahoo.
-        "fundamental_data": "sec_edgar,yfinance",  # Options: sec_edgar, alpha_vantage, yfinance
+            # Statements come from SEC EDGAR as filed (US filers), BiznesRadar.pl
+            # (Warsaw .WA listings), then Yahoo; the overview and insider tools,
+            # which neither serves, from Yahoo.
+            "fundamental_data": "sec_edgar,pl_fundamentals,yfinance",  # Options: sec_edgar, pl_fundamentals, alpha_vantage, yfinance
             # pl_news serves Warsaw (.WA) listings only (ESPI/EBI filings and Polish
             # press) and passes every other ticker on to the next vendor.
             "news_data": "pl_news,yfinance",     # Options: pl_news, alpha_vantage, yfinance

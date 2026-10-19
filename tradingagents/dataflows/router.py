@@ -18,6 +18,11 @@ from tradingagents.dataflows.vendors.alpha_vantage import (
     get_stock as get_alpha_vantage_stock,
 )
 from tradingagents.dataflows.vendors.fred import get_macro_data as get_fred_macro_data
+from tradingagents.dataflows.vendors.pl_fundamentals import (
+    get_balance_sheet as get_pl_balance_sheet,
+    get_cashflow as get_pl_cashflow,
+    get_income_statement as get_pl_income_statement,
+)
 from tradingagents.dataflows.vendors.pl_news import get_news_pl
 from tradingagents.dataflows.vendors.polymarket import (
     get_prediction_markets as get_polymarket_prediction_markets,
@@ -114,16 +119,19 @@ VENDOR_METHODS = {
     "get_balance_sheet": {
         "alpha_vantage": get_alpha_vantage_balance_sheet,
         "sec_edgar": get_sec_edgar_balance_sheet,
+        "pl_fundamentals": get_pl_balance_sheet,
         "yfinance": get_yfinance_balance_sheet,
     },
     "get_cashflow": {
         "alpha_vantage": get_alpha_vantage_cashflow,
         "sec_edgar": get_sec_edgar_cashflow,
+        "pl_fundamentals": get_pl_cashflow,
         "yfinance": get_yfinance_cashflow,
     },
     "get_income_statement": {
         "alpha_vantage": get_alpha_vantage_income_statement,
         "sec_edgar": get_sec_edgar_income_statement,
+        "pl_fundamentals": get_pl_income_statement,
         "yfinance": get_yfinance_income_statement,
     },
     # news_data
