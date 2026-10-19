@@ -144,7 +144,8 @@ def build_default_config() -> dict:
         # pl_news: the company name searched for a Warsaw ticker. Yahoo's short
         # name is used when a ticker is not listed here; add an entry when that
         # name is too generic or differs from the one the Polish press uses.
-        "pl_news_company_names": {},          # e.g. {"MNS.WA": "Mennica Skarbowa"}
+        "pl_news_company_names": {"APR.WA": "Auto Partner", "MNS.WA": "Mennica",
+    "IZS.WA": "Izostal", "MEX.WA": "Mex Polska", "AMC.WA": "Amica",},          # e.g. {"MNS.WA": "Mennica"}
         # Search queries used by get_global_news for macro headlines. Extend or
         # replace to broaden geographic / sector coverage.
         "global_news_queries": [
