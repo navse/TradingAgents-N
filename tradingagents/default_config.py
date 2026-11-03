@@ -141,6 +141,11 @@ def build_default_config() -> dict:
         "news_article_limit": 20,             # max articles per ticker (ticker-news)
         "global_news_article_limit": 10,      # max articles for global/macro news
         "global_news_lookback_days": 7,       # macro news lookback window
+        # pl_news: the company name searched for a Warsaw ticker. Yahoo's short
+        # name is used when a ticker is not listed here; add an entry when that
+        # name is too generic or differs from the one the Polish press uses.
+        "pl_news_company_names": {"APR.WA": "Auto Partner", "MNS.WA": "Mennica",
+    "IZS.WA": "Izostal", "MEX.WA": "Mex Polska", "AMC.WA": "Amica",},          # e.g. {"MNS.WA": "Mennica"}
         # Search queries used by get_global_news for macro headlines. Extend or
         # replace to broaden geographic / sector coverage.
         "global_news_queries": [
@@ -158,10 +163,13 @@ def build_default_config() -> dict:
         "data_vendors": {
             "core_stock_apis": "yfinance",       # Options: alpha_vantage, yfinance
             "technical_indicators": "yfinance",  # Options: alpha_vantage, yfinance
-            # Statements come from SEC EDGAR as filed (US filers), then Yahoo; the
-        # overview and insider tools, which SEC EDGAR does not serve, from Yahoo.
-        "fundamental_data": "sec_edgar,yfinance",  # Options: sec_edgar, alpha_vantage, yfinance
-            "news_data": "yfinance",             # Options: alpha_vantage, yfinance
+            # Statements come from SEC EDGAR as filed (US filers), BiznesRadar.pl
+            # (Warsaw .WA listings), then Yahoo; the overview and insider tools,
+            # which neither serves, from Yahoo.
+            "fundamental_data": "sec_edgar,pl_fundamentals,yfinance",  # Options: sec_edgar, pl_fundamentals, alpha_vantage, yfinance
+            # pl_news serves Warsaw (.WA) listings only (ESPI/EBI filings and Polish
+            # press) and passes every other ticker on to the next vendor.
+            "news_data": "pl_news,yfinance",     # Options: pl_news, alpha_vantage, yfinance
             "macro_data": "fred",                # Options: fred (needs FRED_API_KEY)
             "prediction_markets": "polymarket",  # Options: polymarket (keyless)
         },
@@ -195,6 +203,10 @@ def build_default_config() -> dict:
             ".AS":  "^AEX",        # Amsterdam (AEX)
             ".SW":  "^SSMI",       # Switzerland (SMI)
             ".MI":  "FTSEMIB.MI",  # Milan (FTSE MIB)
+            ".WA":  "WIG20.WA",    # Warsaw (WIG20)
+            ".ST":  "^OMX",        # Stockholm (OMX Stockholm 30)
+            ".MC":  "^IBEX",       # Madrid (IBEX 35)
+            ".BR":  "^BFX",        # Brussels (BEL 20)
             ".TO":  "^GSPTSE",     # Toronto (TSX Composite)
             ".AX":  "^AXJO",       # Australia (ASX 200)
             ".SS":  "000001.SS",   # Shanghai (SSE Composite)

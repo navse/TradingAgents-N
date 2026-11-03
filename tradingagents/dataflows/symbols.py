@@ -71,6 +71,24 @@ _ALIASES = {
 _HK_CODE = re.compile(r"^(\d{1,5})\.HK$")
 _SHANGHAI_SH = re.compile(r"^(\d{6})\.SH$")
 
+# Broker exchange suffixes (XTB / xStation style) that Yahoo spells differently.
+# Only suffixes Yahoo never uses itself are listed, so a Yahoo-native symbol is
+# never rewritten. Swedish ``.SE`` is left out on purpose: XTB writes share
+# classes without Yahoo's dash (SAABB.SE vs SAAB-B.ST), which no suffix rule fixes.
+_BROKER_SUFFIXES = {
+    "PL": "WA",   # Warsaw (GPW)
+    "FR": "PA",   # Euronext Paris
+    "NL": "AS",   # Euronext Amsterdam
+    "IT": "MI",   # Borsa Italiana
+    "ES": "MC",   # Madrid
+    "PT": "LS",   # Euronext Lisbon
+    "FI": "HE",   # Helsinki
+    "UK": "L",    # London
+    "CH": "SW",   # SIX Swiss
+    "US": "",     # US listings carry no suffix on Yahoo
+}
+_BROKER_SUFFIX = re.compile(r"^([A-Z0-9][A-Z0-9\-]*)\.(" + "|".join(_BROKER_SUFFIXES) + r")$")
+
 
 # Crypto quote currencies that all map to Yahoo's USD pair. Yahoo lists only
 # ``<BASE>-USD`` (not the USDT/USDC stablecoin pairs), so a broker symbol quoted
@@ -111,7 +129,9 @@ def normalize_symbol(raw: str) -> str:
       4. HK rule: a numeric ``.HK`` code -> Yahoo's 4-digit padding
          (``09992.HK`` -> ``9992.HK``, ``700.HK`` -> ``0700.HK``).
       5. Shanghai rule: ``600519.SH`` -> ``600519.SS``.
-      6. Otherwise the upper-cased symbol is returned unchanged (plain
+      6. Broker suffix rule (XTB style): ``CDR.PL`` -> ``CDR.WA``,
+         ``BN.FR`` -> ``BN.PA``, ``AAPL.US`` -> ``AAPL``.
+      7. Otherwise the upper-cased symbol is returned unchanged (plain
          equities, ETFs, Yahoo-native symbols like ``GC=F`` or ``^GSPC``).
 
     A trailing ``+`` (broker CFD marker, e.g. ``XAUUSD+``) is stripped before
@@ -136,6 +156,9 @@ def normalize_symbol(raw: str) -> str:
         canonical = f"{int(hk.group(1)):04d}.HK"
     elif sh := _SHANGHAI_SH.match(s):
         canonical = f"{sh.group(1)}.SS"
+    elif broker := _BROKER_SUFFIX.match(s):
+        yahoo_suffix = _BROKER_SUFFIXES[broker.group(2)]
+        canonical = f"{broker.group(1)}.{yahoo_suffix}" if yahoo_suffix else broker.group(1)
     else:
         canonical = s
 
