@@ -1,0 +1,43 @@
+# Dokploy, compose type "Stack" (Docker Swarm). The image is built by
+# .github/workflows/docker-image.yml and pulled from GHCR, since a Stack cannot
+# build and a worker node can only run an image it can pull from a registry.
+# Set the variables in Dokploy's Environment tab; see docs/DEPLOY_DOKPLOY.md.
+services:
+  api:
+    image: ${TA_IMAGE:-ghcr.io/navse/tradingagents-n:dev}
+    command: ["api"]
+    env_file:
+      - .env
+    environment:
+      - TA_API_DATA_DIR=/home/appuser/.tradingagents/api
+    volumes:
+      - tradingagents_data:/home/appuser/.tradingagents
+    networks:
+      - dokploy-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == vmi1107937
+      restart_policy:
+        condition: any
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=dokploy-network
+        - traefik.http.routers.tradingagents-api.rule=Host(`${TA_API_DOMAIN}`)
+        - traefik.http.routers.tradingagents-api.entrypoints=websecure
+        - traefik.http.routers.tradingagents-api.tls.certresolver=letsencrypt
+        - traefik.http.services.tradingagents-api.loadbalancer.server.port=8000
+
+volumes:
+  tradingagents_data:
+
+networks:
+  dokploy-network:
+    external: true

@@ -156,5 +156,20 @@ def backtest(
         console.print(f"[yellow]unsettled:[/yellow] {ticker}: {reason}")
 
 
+@app.command()
+def api():
+    """Serve the HTTP API (needs the api extra and TA_API_KEY); see docs/API.md."""
+    try:
+        from tradingagents_api.app import main as serve
+    except ImportError as exc:
+        console.print(f"[red]The API needs its extra: pip install \"tradingagents[api]\" ({exc})[/red]")
+        raise typer.Exit(code=1) from None
+    try:
+        serve()
+    except RuntimeError as exc:  # TA_API_KEY missing
+        console.print(f"[red]{exc}[/red]")
+        raise typer.Exit(code=1) from None
+
+
 if __name__ == "__main__":
     app()

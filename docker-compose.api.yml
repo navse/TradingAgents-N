@@ -1,0 +1,24 @@
+# TradingAgents HTTP API, built locally: docker compose -f docker-compose.api.yml up -d --build
+# For Dokploy on a Swarm node use docker-compose.dokploy.yml (see docs/DEPLOY_DOKPLOY.md).
+services:
+  api:
+    build: .
+    command: ["api"]
+    env_file:
+      - .env
+    environment:
+      - TA_API_DATA_DIR=/home/appuser/.tradingagents/api
+    ports:
+      - "8000:8000"
+    volumes:
+      - tradingagents_data:/home/appuser/.tradingagents
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  tradingagents_data:

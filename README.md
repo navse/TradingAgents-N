@@ -155,6 +155,10 @@ For local models with Ollama:
 docker compose --profile ollama run --rm tradingagents-ollama
 ```
 
+### HTTP API
+
+To run analyses from another application, serve the API (`pip install ".[api]"`, then `TA_API_KEY=... tradingagents api`, or `docker compose -f docker-compose.api.yml up -d`). `POST /runs` returns a run id; `GET /runs/{id}` reports its status; `GET /runs/{id}/report` returns the report as a zip. A portfolio can be sent with each run or saved once with `PUT /portfolio`. See [docs/API.md](docs/API.md), and [docs/DEPLOY_DOKPLOY.md](docs/DEPLOY_DOKPLOY.md) for deploying it with Dokploy.
+
 ### Required APIs
 
 TradingAgents supports multiple LLM providers. Set the API key for your chosen provider:
@@ -322,7 +326,7 @@ portfolio = PortfolioContext.model_validate({
 _, decision = ta.propagate("NVDA", "2026-09-01", portfolio=portfolio)
 ```
 
-The CLI takes the same content as a JSON file: `tradingagents --portfolio my_book.json`.
+The CLI takes the same content as a JSON file: `tradingagents --portfolio my_book.json` (copy `my_book.json.example` to start).
 
 An empty `positions` list means a flat book, which is different from passing nothing. A run without a portfolio is never treated as flat.
 

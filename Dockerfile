@@ -8,7 +8,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 WORKDIR /build
 COPY . .
-RUN pip install --no-cache-dir .
+RUN pip install --no-cache-dir ".[api]"
 
 FROM python:3.13-slim
 
@@ -25,4 +25,8 @@ WORKDIR /home/appuser/app
 
 COPY --from=builder --chown=appuser:appuser /build .
 
+EXPOSE 8000
+
+# The CLI by default; `api` as the command serves the HTTP API
+# (see docker-compose.api.yml and docs/API.md).
 ENTRYPOINT ["tradingagents"]
