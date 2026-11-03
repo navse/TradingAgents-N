@@ -1,0 +1,86 @@
+{
+  "cash": 5000.00,
+  "currency": "PLN",
+  "positions": [
+    {
+      "ticker": "AMC.WA",
+      "quantity": 40.0,
+      "average_price": 50.5,
+      "currency": "PLN"
+    },
+    {
+      "ticker": "APR.WA",
+      "quantity": 60.0,
+      "average_price": 31.6,
+      "currency": "PLN"
+    },
+    {
+      "ticker": "BN.PA",
+      "quantity": 16.0,
+      "average_price": 66.18,
+      "currency": "EUR"
+    },
+    {
+      "ticker": "CDR.WA",
+      "quantity": 9.4184,
+      "average_price": 261.2401,
+      "currency": "PLN"
+    },
+    {
+      "ticker": "IZS.WA",
+      "quantity": 917.0,
+      "average_price": 3.272,
+      "currency": "PLN"
+    },
+    {
+      "ticker": "MEX.WA",
+      "quantity": 242.0,
+      "average_price": 4.13,
+      "currency": "PLN"
+    },
+    {
+      "ticker": "",
+
+      "quantity": 32.0,
+      "average_price": 60.94,
+      "currency": "PLN"
+    },
+    {
+      "ticker": "NFC.DE",
+      "quantity": 6.0,
+      "average_price": 68.07,
+      "currency": "EUR"
+    },
+    {
+      "ticker": "OPN.WA",
+      "quantity": 20.0,
+      "average_price": 104.8,
+      "currency": "PLN"
+    },
+    {
+      "ticker": "PRX.AS",
+      "quantity": 4.2662,
+      "average_price": 46.871,
+      "currency": "EUR"
+    },
+    {
+      "ticker": "SAAB-B.ST",
+      "quantity": 4.9653,
+      "average_price": 703.72,
+      "currency": "SEK"
+    },
+    {
+      "ticker": "VAGF.DE",
+      "quantity": 9.7515,
+      "average_price": 23.6304,
+      "currency": "EUR"
+    },
+    {
+      "ticker": "VWCE.DE",
+      "quantity": 5.8425,
+      "average_price": 157.6633,
+      "currency": "EUR"
+    }
+  ],
+  "_as_of": "2026-10-13 12:26"
+}
