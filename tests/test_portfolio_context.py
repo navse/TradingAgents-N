@@ -46,6 +46,25 @@ def test_a_ticker_held_under_another_spelling_is_matched():
 
 
 @pytest.mark.unit
+def test_a_broker_symbol_finds_the_position_booked_under_yahoos():
+    book = PortfolioContext.model_validate({"positions": [{"ticker": "MEX.WA", "quantity": 242}]})
+    assert book.position_in("MEX.PL").quantity == 242
+    assert book.position_in("mex.wa").quantity == 242
+    assert book.position_in("MEX") is None
+
+
+@pytest.mark.unit
+def test_a_position_priced_in_another_currency_says_so():
+    book = PortfolioContext.model_validate({
+        "cash": 54068.82, "currency": "PLN",
+        "positions": [{"ticker": "BN.PA", "quantity": 16, "average_price": 66.18, "currency": "EUR"},
+                      {"ticker": "MEX.WA", "quantity": 242, "average_price": 4.13}],
+    })
+    assert "average price 66.18 EUR" in book.render("BN.PA")
+    assert "average price 4.13 PLN" in book.render("MEX.WA")   # the book's currency by default
+
+
+@pytest.mark.unit
 def test_absent_context_is_reported_as_not_provided():
     notice = get_portfolio_context_from_state({"company_of_interest": "AAPL"})
     assert "not provided" in notice.lower()

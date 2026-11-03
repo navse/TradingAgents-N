@@ -19,11 +19,17 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field, ValidationError
 
+from tradingagents.dataflows.symbols import normalize_symbol
+
 
 class Position(BaseModel):
     ticker: str = Field(description="Instrument symbol, e.g. AAPL")
     quantity: float = Field(description="Signed units held; negative is short")
     average_price: float | None = Field(default=None, description="Average entry price per unit")
+    currency: str | None = Field(
+        default=None,
+        description="Currency of average_price, when it differs from the book's (a EUR listing in a PLN book)",
+    )
 
 
 class PortfolioContext(BaseModel):
@@ -32,7 +38,10 @@ class PortfolioContext(BaseModel):
     positions: list[Position] = Field(default_factory=list)
 
     def position_in(self, ticker: str) -> Position | None:
-        return next((p for p in self.positions if p.ticker.upper() == ticker.strip().upper()), None)
+        """The position in ``ticker``, matched as the data layer resolves symbols,
+        so a broker's form (MEX.PL) finds a book written in Yahoo's (MEX.WA)."""
+        wanted = normalize_symbol(ticker.strip())
+        return next((p for p in self.positions if normalize_symbol(p.ticker.strip()) == wanted), None)
 
     def render(self, ticker: str) -> str:
         """The portfolio block for the decision agents, led by the analyzed instrument."""
@@ -41,7 +50,9 @@ class PortfolioContext(BaseModel):
         if held is None:
             lines = [f"- No current position in {symbol}"]
         else:
-            price = f", average price {held.average_price:,.2f}" if held.average_price is not None else ""
+            unit = held.currency or self.currency
+            price = (f", average price {held.average_price:,.2f}{' ' + unit if unit else ''}"
+                     if held.average_price is not None else "")
             lines = [f"- Current position in {symbol}: {held.quantity:,.4g} units{price}"]
         if self.cash is not None:
             lines.append(f"- Cash available: {self.cash:,.2f}{' ' + self.currency if self.currency else ''}")
